@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
-    tools:context="com.javidran.imagejournal.MainActivity">
+    tools:context="com.javidran.imagejournal.view.MainActivity">
 
     <fragment
         android:id="@+id/my_nav_host_fragment"
