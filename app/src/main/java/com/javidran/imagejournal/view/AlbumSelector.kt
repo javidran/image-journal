@@ -2,6 +2,7 @@ package com.javidran.imagejournal.view
 
 import android.graphics.*
 import android.graphics.Bitmap.createBitmap
+import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -9,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
+import java.io.File
 
 
 /**
@@ -95,7 +98,20 @@ class AlbumSelector : Fragment() {
 
         binding.imageWithCounter.setImageBitmap(bitmapFin)
 
+        binding.btnRetake.setOnClickListener { retakePhoto(imagePath) }
+
         return view
+    }
+
+    private fun retakePhoto(imagePath: String) {
+        //deleting rejected image before going back to camera fragment
+        val rejectedImage = File(imagePath)
+        rejectedImage.delete()
+        MediaScannerConnection.scanFile(context, arrayOf(rejectedImage.toString()),
+            arrayOf(rejectedImage.getName()), null)
+
+        //navigating back to camera fragment
+        view?.let { Navigation.findNavController(it).popBackStack() }
     }
 
 
