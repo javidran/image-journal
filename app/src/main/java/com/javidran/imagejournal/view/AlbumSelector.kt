@@ -108,10 +108,11 @@ class AlbumSelector : Fragment() {
             }
         })
 
-        albumViewModel.albumsLiveData.value?.first()?.let {
-            updateChosenAlbum(it)
+        albumViewModel.albumsLiveData.value?.let { list ->
+            if (list.isNotEmpty()) {
+                updateChosenAlbum(list.first())
+            }
         }
-
         // get device dimensions
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
