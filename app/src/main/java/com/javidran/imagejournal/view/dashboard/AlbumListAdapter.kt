@@ -1,4 +1,4 @@
-package com.javidran.imagejournal.view
+package com.javidran.imagejournal.view.dashboard
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.javidran.imagejournal.R
 import com.javidran.imagejournal.model.Album
 
-class CustomAdapter(private val dataSet: List<Album>) :
-    RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+class AlbumListAdapter(private val dataSet: List<Album>) :
+    RecyclerView.Adapter<AlbumListAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using

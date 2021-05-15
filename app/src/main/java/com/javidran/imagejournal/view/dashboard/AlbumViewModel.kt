@@ -1,4 +1,4 @@
-package com.javidran.imagejournal.view
+package com.javidran.imagejournal.view.dashboard
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

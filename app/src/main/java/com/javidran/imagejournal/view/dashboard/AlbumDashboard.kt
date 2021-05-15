@@ -1,4 +1,4 @@
-package com.javidran.imagejournal.view
+package com.javidran.imagejournal.view.dashboard
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -47,7 +47,7 @@ class AlbumDashboard : Fragment() {
 
         albumViewModel.albumsLiveData.observe(viewLifecycleOwner, {
             it?.let {
-                binding.recyclerView.adapter = CustomAdapter(it)
+                binding.recyclerView.adapter = AlbumListAdapter(it)
             }
         })
 
