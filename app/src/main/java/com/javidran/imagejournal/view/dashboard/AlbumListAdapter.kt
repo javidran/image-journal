@@ -8,19 +8,30 @@ import androidx.recyclerview.widget.RecyclerView
 import com.javidran.imagejournal.R
 import com.javidran.imagejournal.model.Album
 
-class AlbumListAdapter(private val dataSet: List<Album>) :
+class AlbumListAdapter(private val dataSet: List<Album>, private val onClick: (Album) -> Unit) :
     RecyclerView.Adapter<AlbumListAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View, val onClick: (Album) -> Unit) : RecyclerView.ViewHolder(view) {
         val album_title: TextView = view.findViewById(R.id.album_title)
         val album_emoji: TextView = view.findViewById(R.id.album_emoji)
+        private var currentAlbum: Album? = null
 
         init {
-            // Define click listener for the ViewHolder's View.
+            itemView.setOnClickListener {
+                currentAlbum?.let {
+                    onClick(it)
+                }
+            }
+        }
+
+        fun bind(album: Album) {
+            currentAlbum = album
+            album_title.text = album.title
+            album_emoji.text = album.emoji
         }
     }
 
@@ -30,7 +41,7 @@ class AlbumListAdapter(private val dataSet: List<Album>) :
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.album_item, viewGroup, false)
 
-        return ViewHolder(view)
+        return ViewHolder(view, onClick)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -38,8 +49,7 @@ class AlbumListAdapter(private val dataSet: List<Album>) :
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.album_title.text = dataSet[position].title
-        viewHolder.album_emoji.text = dataSet[position].emoji
+        viewHolder.bind(dataSet[position])
     }
 
     // Return the size of your dataset (invoked by the layout manager)
