@@ -5,11 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.navigation.compose.navArgument
 import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentAddAlbumBinding
 import com.javidran.imagejournal.databinding.FragmentViewAlbumBinding
+import com.javidran.imagejournal.model.Album
 import com.javidran.imagejournal.model.DataSource
+import com.javidran.imagejournal.model.Entry
+import com.javidran.imagejournal.view.dashboard.AlbumListAdapter
 
 /**
  * A simple [Fragment] subclass.
@@ -22,6 +26,8 @@ class ViewAlbum : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -39,10 +45,24 @@ class ViewAlbum : Fragment() {
         val albumTitle = arguments?.getString("album_title")!!
         binding.viewAlbumTitle.text = albumTitle
 
-        val album = DataSource.getDataSource(requireContext()).getAlbumForTitle(albumTitle)
+        val album: Album = DataSource.getDataSource(requireContext()).getAlbumForTitle(albumTitle)!!
 
+
+        val entryViewModel by viewModels<EntryViewModel> {
+            EntryViewModelFactory(requireContext(), album)
+        }
+
+        entryViewModel.entriesLiveData.observe(viewLifecycleOwner, {
+            it?.let {
+                binding.entriesRecyclerView.adapter = EntryListAdapter(it) { entry -> adapterOnClick(entry) }
+            }
+        })
 
 
         return view
+    }
+
+    fun adapterOnClick(entry: Entry) {
+
     }
 }

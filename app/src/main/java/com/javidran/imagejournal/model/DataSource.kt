@@ -97,12 +97,6 @@ class DataSource(val context: Context) {
         return map
     }
 
-//    /* Returns a random flower asset for flowers that are added. */
-//    fun getRandomFlowerImageAsset(): Int? {
-//        val randomNumber = (initialFlowerList.indices).random()
-//        return initialFlowerList[randomNumber].image
-//    }
-
     companion object {
         private var INSTANCE: DataSource? = null
 

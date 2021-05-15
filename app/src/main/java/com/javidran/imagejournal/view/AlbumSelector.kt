@@ -17,6 +17,8 @@ import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
 import java.io.File
 import com.javidran.imagejournal.model.Album
+import com.javidran.imagejournal.view.album.EntryViewModel
+import com.javidran.imagejournal.view.album.EntryViewModelFactory
 import com.javidran.imagejournal.view.dashboard.AlbumViewModel
 import com.javidran.imagejournal.view.dashboard.AlbumViewModelFactory
 import com.javidran.imagejournal.view.selector.AlbumChooserListAdapter
@@ -36,6 +38,7 @@ class AlbumSelector : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var choosenAlbum :Album
+    lateinit var bitmapFin: Bitmap
 
     private val albumViewModel by viewModels<AlbumViewModel> {
         AlbumViewModelFactory(requireContext())
@@ -46,7 +49,7 @@ class AlbumSelector : Fragment() {
         _binding = null
     }
 
-    fun combineFrameAndImage(imagePath: String): Bitmap? {
+    fun combineFrameAndImage(imagePath: String): Bitmap {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         val image = BitmapFactory.decodeFile(imagePath, options)
@@ -122,14 +125,28 @@ class AlbumSelector : Fragment() {
 
         //Image loading
         var imagePath : String = arguments?.getString("imagePath")!!
-        var bitmapFin = combineFrameAndImage(imagePath)
+        bitmapFin = combineFrameAndImage(imagePath)
 
+        binding.btnSave.setOnClickListener {
+            onSaveImage()
+        }
 
         binding.imageWithCounter.setImageBitmap(bitmapFin)
 
         binding.btnRetake.setOnClickListener { retakePhoto(imagePath) }
 
         return view
+    }
+
+    fun onSaveImage() {
+        //TODO save image
+        var imagePath = "placeholder"
+
+        val entryViewModel by viewModels<EntryViewModel> {
+            EntryViewModelFactory(requireContext(), choosenAlbum)
+        }
+
+        entryViewModel.insertEntry(imagePath)
     }
 
     fun updateChosenAlbum(album: Album) {

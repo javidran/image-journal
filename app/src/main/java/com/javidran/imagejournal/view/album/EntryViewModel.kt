@@ -30,7 +30,7 @@ class EntryViewModel(val dataSource: DataSource, val album: Album) : ViewModel()
     }
 }
 
-class AlbumViewModelFactory(private val context: Context, private val album: Album) : ViewModelProvider.Factory {
+class EntryViewModelFactory(private val context: Context, private val album: Album) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EntryViewModel::class.java)) {
