@@ -16,24 +16,35 @@
 
 package com.javidran.imagejournal.model
 
+import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /* Handles operations on flowersLiveData and holds details about it. */
-class DataSource(resources: Resources) {
-    private val albumsLiveData = MutableLiveData<List<Album>>()
+class DataSource(val context: Context) {
+    private val albumsLiveData = MutableLiveData(getAlbum())
+
+    fun getAlbum() : List<Album> {
+        return AppDatabase.getInstance(context).albumDao().getAll()
+    }
 
     /* Adds flower to liveData and posts value. */
     fun addAlbum(album: Album) {
         val currentList = albumsLiveData.value
         if (currentList == null) {
             albumsLiveData.postValue(listOf(album))
+            AppDatabase.getInstance(context).albumDao().insertAll(album)
         } else {
             val updatedList = currentList.toMutableList()
             updatedList.add(0, album)
             albumsLiveData.postValue(updatedList)
+            AppDatabase.getInstance(context).albumDao().insertAll(album)
         }
         Log.d("DataSource", "Album saved!")
     }
@@ -45,6 +56,7 @@ class DataSource(resources: Resources) {
             val updatedList = currentList.toMutableList()
             updatedList.remove(album)
             albumsLiveData.postValue(updatedList)
+            AppDatabase.getInstance(context).albumDao().delete(album)
         }
     }
 
@@ -69,9 +81,9 @@ class DataSource(resources: Resources) {
     companion object {
         private var INSTANCE: DataSource? = null
 
-        fun getDataSource(resources: Resources): DataSource {
+        fun getDataSource(context: Context): DataSource {
             return synchronized(DataSource::class) {
-                val newInstance = INSTANCE ?: DataSource(resources)
+                val newInstance = INSTANCE ?: DataSource(context)
                 INSTANCE = newInstance
                 newInstance
             }

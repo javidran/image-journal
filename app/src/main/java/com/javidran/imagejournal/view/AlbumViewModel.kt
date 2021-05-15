@@ -16,7 +16,7 @@ class AlbumViewModel(val dataSource: DataSource) : ViewModel() {
             return
         }
 
-        val album = Album(1, title, emoji)
+        val album = Album(title, emoji)
         dataSource.addAlbum(album)
     }
 }
@@ -27,7 +27,7 @@ class AlbumViewModelFactory(private val context: Context) : ViewModelProvider.Fa
         if (modelClass.isAssignableFrom(AlbumViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return AlbumViewModel(
-                dataSource = DataSource.getDataSource(context.resources)
+                dataSource = DataSource.getDataSource(context)
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
