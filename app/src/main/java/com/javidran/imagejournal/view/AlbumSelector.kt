@@ -4,6 +4,7 @@ import android.graphics.*
 import android.graphics.Bitmap.createBitmap
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,22 +30,50 @@ class AlbumSelector : Fragment() {
         _binding = null
     }
 
-    fun combineFrameAndImage(imagePath: String, counter: Bitmap): Bitmap? {
+    fun combineFrameAndImage(imagePath: String): Bitmap? {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         val image = BitmapFactory.decodeFile(imagePath, options)
-    //---------------
-//        val options = BitmapFactory.Options()
-//        options.inSampleSize = 1
-//        val image = BitmapFactory.decodeFile(imagePath, options)
-    //---------------
-        val finalImage = createBitmap(image.getWidth(), image.getHeight(), image.getConfig())
+        val imageWidth = image.getWidth()//!!!Ojillo
+        val imageHeight = image.getHeight()//!!!Ojillo
+        //Creación footer
+        val footerBitmap = designFooter(imageWidth,imageHeight)
+
+
+        var finalImage = createBitmap(image.getWidth(), image.getHeight(), image.getConfig())
         val finalCanvas = Canvas(finalImage)
         finalCanvas.drawBitmap(image, 0F, 0F, null)
+
         val posFromLeft = 0F
-        val posFromTop = 0F
-        finalCanvas.drawBitmap(counter, posFromLeft, posFromTop, null)
+        val posFromTop = (5*imageHeight)/6F
+        finalCanvas.drawBitmap(footerBitmap, posFromLeft, posFromTop, null)
+
+        //Bitmap rotation: https://stackoverflow.com/questions/3647993/android-bitmaps-loaded-from-gallery-are-rotated-in-imageview
+        val matrix = Matrix()
+        matrix.postRotate(270F)
+        finalImage = createBitmap( finalImage,0,0,finalImage.getWidth(), finalImage.getHeight(), matrix,true)
+
         return finalImage
+    }
+
+    fun designFooter(imageWidth: Int,imageHeight: Int): Bitmap {
+        //Paint creation
+        val painter = Paint()
+        painter.setColor(Color.RED) //Color.parseColor("#BDBDBD")
+        //painter.setAntiAlias(true);
+        painter.setStyle(Paint.Style.FILL)
+        /*
+        1.Create a bitmap of the correct size using Bitmap.createBitmap()
+        2.Create a canvas instance pointing that this bitmap using Canvas(Bitmap) constructor
+        3.Draw to the canvas
+        4.Use the bitmap
+        */
+        val bitmap = createBitmap(imageWidth, (imageHeight)/6, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        //canvas.drawRect(0F, 0F, (imageHeight)/6F, (imageHeight)/6F, painter)    // fill
+        canvas.drawPaint(painter)
+        return bitmap
+
     }
 
     override fun onCreateView(
@@ -59,10 +88,9 @@ class AlbumSelector : Fragment() {
         dwidth = displayMetrics.widthPixels
         dheight = displayMetrics.heightPixels
 
+        //Image loading
         var imagePath : String = arguments?.getString("imagePath")!!
-        var emptyBM = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
-
-        var bitmapFin = combineFrameAndImage(imagePath,emptyBM)
+        var bitmapFin = combineFrameAndImage(imagePath)
 
 
         binding.imageWithCounter.setImageBitmap(bitmapFin)
