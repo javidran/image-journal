@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.javidran.imagejournal.R
+import com.javidran.imagejournal.databinding.FragmentAlbumDashboardBinding
+import com.javidran.imagejournal.databinding.FragmentCameraBinding
 
 /**
  * A simple [Fragment] subclass.
@@ -14,11 +16,24 @@ import com.javidran.imagejournal.R
  */
 class AlbumDashboard : Fragment() {
 
+    private var _binding: FragmentAlbumDashboardBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_album_dashboard, container, false)
+        _binding = FragmentAlbumDashboardBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
     }
 }
