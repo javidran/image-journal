@@ -2,6 +2,7 @@ package com.javidran.imagejournal.view
 
 import android.graphics.*
 import android.graphics.Bitmap.createBitmap
+import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -10,11 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
+import java.io.File
 import com.javidran.imagejournal.model.Album
 import com.javidran.imagejournal.view.dashboard.AlbumListAdapter
 import com.javidran.imagejournal.view.dashboard.AlbumViewModel
@@ -118,12 +121,24 @@ class AlbumSelector : Fragment() {
 
         binding.imageWithCounter.setImageBitmap(bitmapFin)
 
+        binding.btnRetake.setOnClickListener { retakePhoto(imagePath) }
+
         return view
     }
 
     private fun adapterOnClick(album: Album) {
         val bundle = bundleOf("album_title" to album.title)
         view?.let { Navigation.findNavController(it).navigate(R.id.action_albumDashboard_to_viewAlbum, bundle) }
+    }
+    private fun retakePhoto(imagePath: String) {
+        //deleting rejected image before going back to camera fragment
+        val rejectedImage = File(imagePath)
+        rejectedImage.delete()
+        MediaScannerConnection.scanFile(context, arrayOf(rejectedImage.toString()),
+            arrayOf(rejectedImage.getName()), null)
+
+        //navigating back to camera fragment
+        view?.let { Navigation.findNavController(it).popBackStack() }
     }
 
 

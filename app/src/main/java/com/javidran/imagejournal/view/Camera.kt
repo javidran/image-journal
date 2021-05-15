@@ -2,7 +2,6 @@ package com.javidran.imagejournal.view
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -88,10 +87,6 @@ class Camera : Fragment() {
         }
         // Re-bind use cases to update selected camera
         startCamera()
-    }
-
-    private fun bindCameraUseCases() {
-        TODO("Not yet implemented")
     }
 
     private fun goToAlbums() {
