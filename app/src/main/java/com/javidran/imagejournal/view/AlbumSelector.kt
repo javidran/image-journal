@@ -54,8 +54,10 @@ class AlbumSelector : Fragment() {
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         dwidth = displayMetrics.widthPixels
         dheight = displayMetrics.heightPixels
-        var pathDeImagen = "hola"
-        combineFrameAndImage(pathDeImagen,null)
+
+        var imagePath : String = arguments?.getString("imagePath")!!
+        var emptyBM = Bitmap.createBitmap(0, 0, Bitmap.Config.ARGB_8888);
+        combineFrameAndImage(imagePath,emptyBM)
 
 
         return view
