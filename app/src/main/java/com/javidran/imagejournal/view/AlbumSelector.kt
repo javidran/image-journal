@@ -30,10 +30,14 @@ class AlbumSelector : Fragment() {
     }
 
     fun combineFrameAndImage(imagePath: String, counter: Bitmap): Bitmap? {
+        //val options = BitmapFactory.Options()
+        //options.inPreferredConfig = Bitmap.Config.ARGB_8888
+        //val image = BitmapFactory.decodeFile(imagePath, options)
+    //---------------
         val options = BitmapFactory.Options()
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888
+        options.inSampleSize = 1
         val image = BitmapFactory.decodeFile(imagePath, options)
-
+    //---------------
         val finalImage = createBitmap(image.getWidth(), image.getHeight(), image.getConfig())
         val finalCanvas = Canvas(finalImage)
         finalCanvas.drawBitmap(image, 0F, 0F, null)
@@ -56,9 +60,12 @@ class AlbumSelector : Fragment() {
         dheight = displayMetrics.heightPixels
 
         var imagePath : String = arguments?.getString("imagePath")!!
-        var emptyBM = Bitmap.createBitmap(0, 0, Bitmap.Config.ARGB_8888);
-        combineFrameAndImage(imagePath,emptyBM)
+        var emptyBM = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
 
+        var bitmapFin = combineFrameAndImage(imagePath,emptyBM)
+
+
+        binding.imageWithCounter.setImageBitmap(bitmapFin)
 
         return view
     }
