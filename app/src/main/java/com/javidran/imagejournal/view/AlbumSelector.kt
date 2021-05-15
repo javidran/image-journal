@@ -5,7 +5,6 @@ import android.graphics.Bitmap.createBitmap
 import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,7 +61,7 @@ class AlbumSelector : Fragment() {
         finalCanvas.drawBitmap(image, 0F, 0F, null)
 
         val posFromLeft = 0F
-        val posFromTop = (5*imageHeight)/6F
+        val posFromTop = 0F//(5*imageHeight)/6F
         finalCanvas.drawBitmap(footerBitmap, posFromLeft, posFromTop, null)
 
         //Bitmap rotation: https://stackoverflow.com/questions/3647993/android-bitmaps-loaded-from-gallery-are-rotated-in-imageview
@@ -74,21 +73,22 @@ class AlbumSelector : Fragment() {
     }
 
     fun designFooter(imageWidth: Int,imageHeight: Int): Bitmap {
-        //Paint creation
+        //Painter
         val painter = Paint()
-        painter.setColor(Color.RED) //Color.parseColor("#BDBDBD")
-        //painter.setAntiAlias(true);
+        painter.setColor(Color.parseColor("#BDBDBD"))//painter.setColor(Color.RED)
         painter.setStyle(Paint.Style.FILL)
-        /*
-        1.Create a bitmap of the correct size using Bitmap.createBitmap()
-        2.Create a canvas instance pointing that this bitmap using Canvas(Bitmap) constructor
-        3.Draw to the canvas
-        4.Use the bitmap
-        */
-        val bitmap = createBitmap(imageWidth, (imageHeight)/6, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap((imageHeight)/6, imageWidth, Bitmap.Config.ARGB_8888)//!!!Ojito
         val canvas = Canvas(bitmap)
-        //canvas.drawRect(0F, 0F, (imageHeight)/6F, (imageHeight)/6F, painter)    // fill
         canvas.drawPaint(painter)
+        //Writer
+        val writer = Paint()
+        writer.setColor(Color.BLACK)
+        writer.setStyle(Paint.Style.FILL)
+        writer.setAntiAlias(true)
+        writer.setTextSize(100F)
+        val x = 0F
+        val y = 0F
+        canvas.drawText("Hi", 0F, 0F, writer)
         return bitmap
 
     }
@@ -108,10 +108,11 @@ class AlbumSelector : Fragment() {
             }
         })
 
-        albumViewModel.albumsLiveData.value?.first()?.let {
-            updateChosenAlbum(it)
+        albumViewModel.albumsLiveData.value?.let { list ->
+            if (list.isNotEmpty()) {
+                updateChosenAlbum(list.first())
+            }
         }
-
         // get device dimensions
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
