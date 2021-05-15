@@ -122,8 +122,7 @@ class Camera : Fragment() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val savedUri = Uri.fromFile(photoFile)
-                    val msg = "Photo capture succeeded: $savedUri"
+                    val msg = "Photo capture succeeded!"
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
                 }
