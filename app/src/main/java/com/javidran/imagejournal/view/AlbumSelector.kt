@@ -12,6 +12,9 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.util.DisplayMetrics
+import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
+import com.javidran.imagejournal.databinding.FragmentCameraBinding
+
 /**
  * A simple [Fragment] subclass.
  * Use the [AlbumSelector.newInstance] factory method to
@@ -19,15 +22,22 @@ import android.util.DisplayMetrics
  */
 class AlbumSelector : Fragment() {
 
+    private var _binding: FragmentAlbumSelectorBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_album_selector, container, false)
-
-        val imageView = view.findViewById<View>(R.id.imageCircle)
-
+        _binding = FragmentAlbumSelectorBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         val bitmap = Bitmap.createBitmap(700, 1000, Bitmap.Config.ARGB_4444)
         val canvas = Canvas(bitmap)
@@ -55,36 +65,9 @@ class AlbumSelector : Fragment() {
         // now bitmap holds the updated pixels
 
         // set bitmap as background to ImageView
-        imageCircle.background = BitmapDrawable(getResources(), bitmap)
+        binding.imageCircle.background = BitmapDrawable(getResources(), bitmap)
 
         return view
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
-
-    }
-
-    fun populate(model: Model) {
-        this.model = model
-        icon = resources.getDrawable(model.image) //icon for the view from the
-        invalidate()
-    }
-    fun onDraw(canvas: Canvas) {
-        Paint paintText = new Paint()
-        paint.setStyle(Paint.Style.STROKE)
-        paint.setStrokeWidth(5)
-
-
-        icon.setBounds(margin,margin,margin + imageSixe, margin + imageSize) //coming from the dimensions
-        icon.draw(canvas)
-
-        canvas.drawText(model.title, iamgeSize + margin * 2F, margin * 2F, paintText)// painttext is the paint object initiated with a color
-        canvas.drawText(model.subtitle, iamgeSize + margin * 2F, margin * 2F, paintText)
-
-        super.onDraw(canvas)
     }
 
 }
