@@ -22,6 +22,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <Button
+            android:id="@+id/camera_switch"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/obturador"
+            app:layout_constraintBottom_toBottomOf="@+id/camera_capture_button"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/albums"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.camera.view.PreviewView
             android:id="@+id/preview"
             android:layout_width="match_parent"
