@@ -8,6 +8,7 @@ import androidx.room.RoomDatabase
 @Database(entities = arrayOf(Album::class), version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun albumDao(): AlbumDao
+    abstract fun entryDao(): EntryDao
 
 
     companion object {
