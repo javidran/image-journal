@@ -99,6 +99,7 @@ class AlbumSelector : Fragment() {
     ): View? {
         _binding = FragmentAlbumSelectorBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.btnSave.visibility = View.GONE
 
         binding.albumOptions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
@@ -132,6 +133,7 @@ class AlbumSelector : Fragment() {
     }
 
     fun updateChosenAlbum(album: Album) {
+        binding.btnSave.visibility = View.VISIBLE
         choosenAlbum = album
         binding.albumChooserTitle.text = choosenAlbum.title
 
