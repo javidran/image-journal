@@ -29,6 +29,7 @@ import kotlinx.coroutines.runBlocking
 /* Handles operations on flowersLiveData and holds details about it. */
 class DataSource(val context: Context) {
     private val albumsLiveData = MutableLiveData(getAlbum())
+    private val entriesListLiveData = getAllEntries()
 
     fun getAlbum() : List<Album> {
         return AppDatabase.getInstance(context).albumDao().getAll()
@@ -70,6 +71,28 @@ class DataSource(val context: Context) {
 
     fun getAlbumList(): LiveData<List<Album>> {
         return albumsLiveData
+    }
+
+    fun addImageToAlbum(entry: Entry) {
+
+
+    }
+
+    fun getNextNumberForAlbum(albumTitle: String): Int {
+        return getEntriesFromAlbum(albumTitle).value!!.size + 1
+    }
+
+    fun getEntriesFromAlbum(albumTitle: String) : LiveData<List<Entry>> {
+        return entriesListLiveData[albumTitle]!!
+    }
+
+    fun getAllEntries() : HashMap<String, MutableLiveData<List<Entry>>> {
+        val map = HashMap<String, MutableLiveData<List<Entry>>>()
+        val list = AppDatabase.getInstance(context).albumDao().getAlbumWithEntries()
+        list.forEach {
+            map.set(it.album.title, MutableLiveData(it.entries))
+        }
+        return map
     }
 
 //    /* Returns a random flower asset for flowers that are added. */
