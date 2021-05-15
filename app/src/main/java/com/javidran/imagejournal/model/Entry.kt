@@ -11,5 +11,5 @@ data class Entry(
     val number: Int,
     val imagePath:String,
     val imageDate: Date,
-    val location: Location,
-    val albumTitle: Album)
+//    val location: Location, TODO: Ver como guardar este dato decentemente
+    val albumTitle: String)
