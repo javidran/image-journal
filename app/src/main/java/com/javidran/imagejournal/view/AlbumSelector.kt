@@ -1,19 +1,14 @@
 package com.javidran.imagejournal.view
 
-import android.graphics.Canvas
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.javidran.imagejournal.R
-import android.graphics.Color
-import android.graphics.Bitmap
-import android.graphics.Paint
-import android.graphics.drawable.BitmapDrawable
-import android.util.DisplayMetrics
+import androidx.fragment.app.Fragment
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
-import com.javidran.imagejournal.databinding.FragmentCameraBinding
 
 /**
  * A simple [Fragment] subclass.
@@ -26,6 +21,15 @@ class AlbumSelector : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    var fillPaint = Paint()
+
+    fun initPaints() {
+
+        // fill
+        fillPaint.setStyle(Paint.Style.FILL)
+        fillPaint.setColor(Color.GRAY)
+
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -38,36 +42,31 @@ class AlbumSelector : Fragment() {
     ): View? {
         _binding = FragmentAlbumSelectorBinding.inflate(inflater, container, false)
         val view = binding.root
-
-        val bitmap = Bitmap.createBitmap(700, 1000, Bitmap.Config.ARGB_4444)
-        val canvas = Canvas(bitmap)
-        // canvas background color
-        canvas.drawARGB(255, 78, 168, 186);
-
-        var paint = Paint()
-        paint.setColor(Color.parseColor("#FFFFFF"))
-        paint.setStrokeWidth(30F)
-        paint.setStyle(Paint.Style.STROKE)
-        paint.setAntiAlias(true)
-        paint.setDither(true)
-
         // get device dimensions
         val displayMetrics = DisplayMetrics()
-        WindowManager.defaultDisplay.getMetrics(displayMetrics)
-        // circle center
-        System.out.println("Width : "+displayMetrics.widthPixels)
-        var center_x = (displayMetrics.widthPixels/2).toFloat()
-        var center_y = (displayMetrics.heightPixels/2).toFloat()
-        var radius = 300F
+        activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+        val dwidth = displayMetrics.widthPixels
+        val dheight = displayMetrics.heightPixels
+        //val rectInf = RectF(0F, ((5*dheight)/6).toFloat(), 0F,0F)
+        val rectInf = RectF(3F, 3F,3F,3F)
 
-        // draw circle
-        canvas.drawCircle(center_x, center_y, radius, paint)
+        val bitmap = Bitmap.createBitmap(dwidth, dheight, Bitmap.Config.ARGB_4444) //width:700 height:1000
+        initPaints()
+        val canvas = Canvas(bitmap)
+        //canvas.drawARGB(255, 100, 250, 250); // canvas background color
+
+        val cornerRadius = 50
+        canvas.drawRect(0F, 0F, 5F, 5F, fillPaint);
+        canvas.drawRoundRect(rectInf, cornerRadius.toFloat(), cornerRadius.toFloat(), fillPaint)
         // now bitmap holds the updated pixels
 
         // set bitmap as background to ImageView
-        binding.imageCircle.background = BitmapDrawable(getResources(), bitmap)
-
+        binding.imageRect.background = BitmapDrawable(getResources(), bitmap)
         return view
+    }
+
+    fun onDraw (){
+
     }
 
 }
