@@ -30,13 +30,13 @@ class AlbumSelector : Fragment() {
     }
 
     fun combineFrameAndImage(imagePath: String, counter: Bitmap): Bitmap? {
-        //val options = BitmapFactory.Options()
-        //options.inPreferredConfig = Bitmap.Config.ARGB_8888
-        //val image = BitmapFactory.decodeFile(imagePath, options)
-    //---------------
         val options = BitmapFactory.Options()
-        options.inSampleSize = 1
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888
         val image = BitmapFactory.decodeFile(imagePath, options)
+    //---------------
+//        val options = BitmapFactory.Options()
+//        options.inSampleSize = 1
+//        val image = BitmapFactory.decodeFile(imagePath, options)
     //---------------
         val finalImage = createBitmap(image.getWidth(), image.getHeight(), image.getConfig())
         val finalCanvas = Canvas(finalImage)

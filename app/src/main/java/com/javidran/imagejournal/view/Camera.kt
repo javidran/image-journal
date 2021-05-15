@@ -127,7 +127,7 @@ class Camera : Fragment() {
                     val msg = "Photo capture succeeded!"
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
-                    val bundle = bundleOf("imagePath" to Uri.fromFile(photoFile).toString())
+                    val bundle = bundleOf("imagePath" to photoFile.absolutePath)
                     view?.let { Navigation.findNavController(it).navigate(R.id.action_camera_to_albumSelector, bundle) }
                 }
             })
