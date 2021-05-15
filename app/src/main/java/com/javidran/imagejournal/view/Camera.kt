@@ -13,7 +13,9 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentCameraBinding
 import kotlinx.android.synthetic.main.activity_main.*
@@ -125,6 +127,8 @@ class Camera : Fragment() {
                     val msg = "Photo capture succeeded!"
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
+                    val bundle = bundleOf("imagePath" to Uri.fromFile(photoFile))
+                    view?.let { Navigation.findNavController(it).navigate(R.id.action_camera_to_albumSelector, bundle) }
                 }
             })
     }
