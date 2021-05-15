@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.album.AddAlbum">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="#FD8787"
+            android:text="Cancel"
+            app:layout_constraintBottom_toBottomOf="@+id/saveButton"
+            app:layout_constraintEnd_toStartOf="@+id/saveButton" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="#69F177"
+            android:text="Save"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/albumTitleHintText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="How is the album going to be called?"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/albumEmojiInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Type an emoji"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toStartOf="@+id/albumEmojiHintText"
+            app:layout_constraintTop_toBottomOf="@+id/albumEmojiHintText" />
+
+        <TextView
+            android:id="@+id/albumEmojiHintText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Define your album with an emoji:"
+            app:layout_constraintStart_toStartOf="@+id/albumTitleInput"
+            app:layout_constraintTop_toBottomOf="@+id/albumTitleInput" />
+
+        <EditText
+            android:id="@+id/albumTitleInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:hint="Type a title"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toStartOf="@+id/albumTitleHintText"
+            app:layout_constraintTop_toBottomOf="@+id/albumTitleHintText" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

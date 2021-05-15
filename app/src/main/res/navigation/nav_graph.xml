@@ -10,4 +10,24 @@
         android:name="com.javidran.imagejournal.view.Camera"
         android:label="fragment_camera"
         tools:layout="@layout/fragment_camera" />
+    <fragment
+        android:id="@+id/albumSelector"
+        android:name="com.javidran.imagejournal.view.AlbumSelector"
+        android:label="fragment_album_selector"
+        tools:layout="@layout/fragment_album_selector" />
+    <fragment
+        android:id="@+id/albumDashboard"
+        android:name="com.javidran.imagejournal.view.AlbumDashboard"
+        android:label="fragment_album_dashboard"
+        tools:layout="@layout/fragment_album_dashboard" >
+        <action
+            android:id="@+id/action_albumDashboard_to_addAlbum"
+            app:destination="@id/addAlbum"
+            app:popUpTo="@id/albumDashboard" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAlbum"
+        android:name="com.javidran.imagejournal.view.album.AddAlbum"
+        android:label="fragment_add_album"
+        tools:layout="@layout/fragment_add_album" />
 </navigation>

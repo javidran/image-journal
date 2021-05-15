@@ -1,4 +1,4 @@
-package com.javidran.imagejournal.view
+package com.javidran.imagejournal.view.album
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,19 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.javidran.imagejournal.R
+import com.javidran.imagejournal.databinding.FragmentAddAlbumBinding
 import com.javidran.imagejournal.databinding.FragmentAlbumDashboardBinding
 import com.javidran.imagejournal.model.Album
+import com.javidran.imagejournal.model.DataSource
+import com.javidran.imagejournal.view.AlbumViewModel
+import com.javidran.imagejournal.view.AlbumViewModelFactory
 
 /**
  * A simple [Fragment] subclass.
- * Use the [AlbumDashboard.newInstance] factory method to
+ * Use the [AddAlbum.newInstance] factory method to
  * create an instance of this fragment.
  */
-class AlbumDashboard : Fragment() {
+class AddAlbum : Fragment() {
 
-    private var _binding: FragmentAlbumDashboardBinding? = null
+    private var _binding: FragmentAddAlbumBinding? = null
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -27,7 +30,6 @@ class AlbumDashboard : Fragment() {
     private val albumViewModel by viewModels<AlbumViewModel> {
         AlbumViewModelFactory(requireContext())
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -39,29 +41,24 @@ class AlbumDashboard : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentAlbumDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentAddAlbumBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-//        binding.recyclerView.adapter = albumViewModel.albumsLiveData.value?.let { CustomAdapter(it) }
+        binding.cancelButton.setOnClickListener {
+            Navigation.findNavController(view).popBackStack()
+        }
 
-        albumViewModel.albumsLiveData.observe(viewLifecycleOwner, {
-            it?.let {
-                binding.recyclerView.adapter = CustomAdapter(it)
-            }
-        })
-
-        binding.addAlbumButton.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_albumDashboard_to_addAlbum)
+        binding.saveButton.setOnClickListener {
+            createAlbum()
         }
 
         return view
     }
 
 
+    fun createAlbum() {
 
-    private fun adapterOnClick(album: Album) {
-        // TODO
+        albumViewModel.insertAlbum(binding.albumTitleInput.text.toString(), binding.albumEmojiInput.text.toString())
+        view?.let { Navigation.findNavController(it).popBackStack() }
     }
-
 }
