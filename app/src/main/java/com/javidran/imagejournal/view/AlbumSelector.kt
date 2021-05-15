@@ -8,8 +8,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
+import com.javidran.imagejournal.model.Album
+import com.javidran.imagejournal.view.dashboard.AlbumListAdapter
+import com.javidran.imagejournal.view.dashboard.AlbumViewModel
+import com.javidran.imagejournal.view.dashboard.AlbumViewModelFactory
+import com.javidran.imagejournal.view.selector.AlbumChooserListAdapter
 
 
 /**
@@ -24,6 +34,10 @@ class AlbumSelector : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private val albumViewModel by viewModels<AlbumViewModel> {
+        AlbumViewModelFactory(requireContext())
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -82,6 +96,15 @@ class AlbumSelector : Fragment() {
     ): View? {
         _binding = FragmentAlbumSelectorBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        binding.albumOptions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+        albumViewModel.albumsLiveData.observe(viewLifecycleOwner, {
+            it?.let {
+                binding.albumOptions.adapter = AlbumChooserListAdapter(it) { album -> adapterOnClick(album) }
+            }
+        })
+
         // get device dimensions
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
@@ -96,6 +119,11 @@ class AlbumSelector : Fragment() {
         binding.imageWithCounter.setImageBitmap(bitmapFin)
 
         return view
+    }
+
+    private fun adapterOnClick(album: Album) {
+        val bundle = bundleOf("album_title" to album.title)
+        view?.let { Navigation.findNavController(it).navigate(R.id.action_albumDashboard_to_viewAlbum, bundle) }
     }
 
 
