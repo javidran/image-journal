@@ -1,10 +1,12 @@
 package com.javidran.imagejournal.view.dashboard
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,7 +49,7 @@ class AlbumDashboard : Fragment() {
 
         albumViewModel.albumsLiveData.observe(viewLifecycleOwner, {
             it?.let {
-                binding.recyclerView.adapter = AlbumListAdapter(it)
+                binding.recyclerView.adapter = AlbumListAdapter(it) { album -> adapterOnClick(album) }
             }
         })
 
@@ -61,7 +63,8 @@ class AlbumDashboard : Fragment() {
 
 
     private fun adapterOnClick(album: Album) {
-        // TODO
+        val bundle = bundleOf("album_title" to album.title)
+        view?.let { Navigation.findNavController(it).navigate(R.id.action_albumDashboard_to_viewAlbum, bundle) }
     }
 
 }
