@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
-@Database(entities = arrayOf(Album::class), version = 1)
+@Database(entities = arrayOf(Album::class, Entry::class), version = 1)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun albumDao(): AlbumDao
+    abstract fun entryDao(): EntryDao
 
 
     companion object {
