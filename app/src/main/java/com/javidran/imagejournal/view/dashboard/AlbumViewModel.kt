@@ -19,6 +19,10 @@ class AlbumViewModel(val dataSource: DataSource) : ViewModel() {
         val album = Album(title, emoji)
         dataSource.addAlbum(album)
     }
+
+    fun getNextNumber(album: Album): Int {
+        return dataSource.getNextNumberForAlbum(album.title)
+    }
 }
 
 class AlbumViewModelFactory(private val context: Context) : ViewModelProvider.Factory {

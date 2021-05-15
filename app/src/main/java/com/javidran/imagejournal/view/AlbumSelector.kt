@@ -9,10 +9,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
 import java.io.File
+import com.javidran.imagejournal.model.Album
+import com.javidran.imagejournal.view.dashboard.AlbumViewModel
+import com.javidran.imagejournal.view.dashboard.AlbumViewModelFactory
+import com.javidran.imagejournal.view.selector.AlbumChooserListAdapter
 
 
 /**
@@ -27,6 +35,12 @@ class AlbumSelector : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    lateinit var choosenAlbum :Album
+
+    private val albumViewModel by viewModels<AlbumViewModel> {
+        AlbumViewModelFactory(requireContext())
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -85,6 +99,19 @@ class AlbumSelector : Fragment() {
     ): View? {
         _binding = FragmentAlbumSelectorBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        binding.albumOptions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+        albumViewModel.albumsLiveData.observe(viewLifecycleOwner, {
+            it?.let {
+                binding.albumOptions.adapter = AlbumChooserListAdapter(it) { album -> updateChosenAlbum(album) }
+            }
+        })
+
+        albumViewModel.albumsLiveData.value?.first()?.let {
+            updateChosenAlbum(it)
+        }
+
         // get device dimensions
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
@@ -101,6 +128,14 @@ class AlbumSelector : Fragment() {
         binding.btnRetake.setOnClickListener { retakePhoto(imagePath) }
 
         return view
+    }
+
+    fun updateChosenAlbum(album: Album) {
+        choosenAlbum = album
+        binding.albumChooserTitle.text = choosenAlbum.title
+
+        var number = albumViewModel.getNextNumber(album)
+        //TODO actualizar filtro con datos del album
     }
 
     private fun retakePhoto(imagePath: String) {
