@@ -13,13 +13,11 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
 import java.io.File
 import com.javidran.imagejournal.model.Album
-import com.javidran.imagejournal.view.dashboard.AlbumListAdapter
 import com.javidran.imagejournal.view.dashboard.AlbumViewModel
 import com.javidran.imagejournal.view.dashboard.AlbumViewModelFactory
 import com.javidran.imagejournal.view.selector.AlbumChooserListAdapter
@@ -37,6 +35,8 @@ class AlbumSelector : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    lateinit var choosenAlbum :Album
 
     private val albumViewModel by viewModels<AlbumViewModel> {
         AlbumViewModelFactory(requireContext())
@@ -104,9 +104,13 @@ class AlbumSelector : Fragment() {
 
         albumViewModel.albumsLiveData.observe(viewLifecycleOwner, {
             it?.let {
-                binding.albumOptions.adapter = AlbumChooserListAdapter(it) { album -> adapterOnClick(album) }
+                binding.albumOptions.adapter = AlbumChooserListAdapter(it) { album -> updateChosenAlbum(album) }
             }
         })
+
+        albumViewModel.albumsLiveData.value?.first()?.let {
+            updateChosenAlbum(it)
+        }
 
         // get device dimensions
         val displayMetrics = DisplayMetrics()
@@ -126,10 +130,14 @@ class AlbumSelector : Fragment() {
         return view
     }
 
-    private fun adapterOnClick(album: Album) {
-        val bundle = bundleOf("album_title" to album.title)
-        view?.let { Navigation.findNavController(it).navigate(R.id.action_albumDashboard_to_viewAlbum, bundle) }
+    fun updateChosenAlbum(album: Album) {
+        choosenAlbum = album
+        binding.albumChooserTitle.text = choosenAlbum.title
+
+        var number = albumViewModel.getNextNumber(album)
+        //TODO actualizar filtro con datos del album
     }
+
     private fun retakePhoto(imagePath: String) {
         //deleting rejected image before going back to camera fragment
         val rejectedImage = File(imagePath)

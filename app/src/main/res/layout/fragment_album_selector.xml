@@ -28,6 +28,26 @@
 
                 />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="16dp"
+                    android:text="Choosen album:" />
+
+                <TextView
+                    android:id="@+id/album_chooser_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="There are no albums" />
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/album_options"
                 android:layout_width="match_parent"
@@ -35,7 +55,9 @@
                 android:orientation="horizontal"
                 tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="10"
-                tools:listitem="@layout/album_chooser_item" />
+                tools:listitem="@layout/album_chooser_item" >
+
+            </androidx.recyclerview.widget.RecyclerView>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
