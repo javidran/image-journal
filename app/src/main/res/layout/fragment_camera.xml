@@ -34,12 +34,12 @@
 
         <Button
             android:id="@+id/albums"
-            android:layout_width="50dp"
+            android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="20dp"
-            android:text="X"
-            android:textSize="24dp"
+            android:text="Albums"
+            android:textSize="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
