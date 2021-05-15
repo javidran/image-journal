@@ -9,7 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.camera.core.*
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -18,21 +21,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentCameraBinding
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_camera.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-typealias LumaListener = (luma: Double) -> Unit
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Camera.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Camera : Fragment() {
     private var imageCapture: ImageCapture? = null
 
@@ -43,6 +37,8 @@ class Camera : Fragment() {
     private val binding get() = _binding!!
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+
+    private var lensFacing: Int = CameraSelector.LENS_FACING_FRONT
 
 
     override fun onDestroyView() {
@@ -73,11 +69,35 @@ class Camera : Fragment() {
         // Set up the listener for take photo button
         binding.cameraCaptureButton.setOnClickListener { takePhoto() }
 
+        binding.albums.setOnClickListener { goToAlbums() }
+
+        binding.cameraSwap.setOnClickListener { swapCamera() }
+
         outputDirectory = getOutputDirectory()
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         return view
+    }
+
+    private fun swapCamera() {
+        lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
+            CameraSelector.LENS_FACING_BACK
+        } else {
+            CameraSelector.LENS_FACING_FRONT
+        }
+        // Re-bind use cases to update selected camera
+        startCamera()
+    }
+
+    private fun bindCameraUseCases() {
+        TODO("Not yet implemented")
+    }
+
+    private fun goToAlbums() {
+        view?.let {
+            Navigation.findNavController(it).navigate(R.id.action_camera_to_albumDashboard)
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -151,7 +171,7 @@ class Camera : Fragment() {
                 .build()
 
             // Select front camera as a default (granizado selfie intensifies!)
-            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+            val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
             try {
                 // Unbind use cases before rebinding
@@ -159,7 +179,8 @@ class Camera : Fragment() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture)
+                    this, cameraSelector, preview, imageCapture
+                )
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
