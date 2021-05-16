@@ -21,7 +21,12 @@
         android:id="@+id/albumSelector"
         android:name="com.javidran.imagejournal.view.AlbumSelector"
         android:label="fragment_album_selector"
-        tools:layout="@layout/fragment_album_selector" />
+        tools:layout="@layout/fragment_album_selector" >
+        <action
+            android:id="@+id/action_albumSelector_to_albumDashboard"
+            app:destination="@id/albumDashboard"
+            app:popUpTo="@id/camera" />
+    </fragment>
     <fragment
         android:id="@+id/albumDashboard"
         android:name="com.javidran.imagejournal.view.dashboard.AlbumDashboard"

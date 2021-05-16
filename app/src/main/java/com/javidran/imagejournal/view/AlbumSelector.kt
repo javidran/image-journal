@@ -14,10 +14,15 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
 import com.javidran.imagejournal.model.Album
+import com.javidran.imagejournal.view.album.EntryViewModel
+import com.javidran.imagejournal.view.album.EntryViewModelFactory
 import com.javidran.imagejournal.view.dashboard.AlbumViewModel
 import com.javidran.imagejournal.view.dashboard.AlbumViewModelFactory
 import com.javidran.imagejournal.view.selector.AlbumChooserListAdapter
 import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -34,6 +39,7 @@ class AlbumSelector : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var choosenAlbum :Album
+    lateinit var bitmapFin: Bitmap
 
     private val albumViewModel by viewModels<AlbumViewModel> {
         AlbumViewModelFactory(requireContext())
@@ -123,14 +129,50 @@ class AlbumSelector : Fragment() {
 
         //Image loading
         var imagePath : String = arguments?.getString("imagePath")!!
-        var bitmapFin = combineFrameAndImage(imagePath)
+        bitmapFin = combineFrameAndImage(imagePath)
 
+        binding.btnSave.setOnClickListener {
+            onSaveImage()
+        }
 
         binding.imageWithCounter.setImageBitmap(bitmapFin)
 
         binding.btnRetake.setOnClickListener { retakePhoto(imagePath) }
 
         return view
+    }
+
+    fun onSaveImage() {
+        var photoFile = File(
+            getOutputDirectory(),
+            SimpleDateFormat(
+                Camera.FILENAME_FORMAT, Locale.US
+            ).format(System.currentTimeMillis()) + ".jpg"
+        )
+
+        var out = FileOutputStream(photoFile)
+        bitmapFin.compress(Bitmap.CompressFormat.PNG, 100, out)
+        out.close()
+
+        var imagePath = photoFile.absolutePath
+
+        val entryViewModel by viewModels<EntryViewModel> {
+            EntryViewModelFactory(requireContext(), choosenAlbum)
+        }
+
+        entryViewModel.insertEntry(imagePath)
+
+        view?.let {
+            Navigation.findNavController(it).navigate(R.id.action_albumSelector_to_albumDashboard)
+        }
+    }
+
+    private fun getOutputDirectory(): File {
+        val mediaDir = activity?.externalMediaDirs?.firstOrNull()?.let {
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+        }
+        return if (mediaDir != null && mediaDir.exists())
+            mediaDir else context?.filesDir!!
     }
 
     fun updateChosenAlbum(album: Album) {
