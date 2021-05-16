@@ -22,6 +22,9 @@ import com.javidran.imagejournal.view.album.EntryViewModelFactory
 import com.javidran.imagejournal.view.dashboard.AlbumViewModel
 import com.javidran.imagejournal.view.dashboard.AlbumViewModelFactory
 import com.javidran.imagejournal.view.selector.AlbumChooserListAdapter
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -139,14 +142,36 @@ class AlbumSelector : Fragment() {
     }
 
     fun onSaveImage() {
-        //TODO save image
-        var imagePath = "placeholder"
+        var photoFile = File(
+            getOutputDirectory(),
+            SimpleDateFormat(
+                Camera.FILENAME_FORMAT, Locale.US
+            ).format(System.currentTimeMillis()) + ".jpg"
+        )
+
+        var out = FileOutputStream(photoFile)
+        bitmapFin.compress(Bitmap.CompressFormat.PNG, 100, out)
+        out.close()
+
+        var imagePath = photoFile.absolutePath
 
         val entryViewModel by viewModels<EntryViewModel> {
             EntryViewModelFactory(requireContext(), choosenAlbum)
         }
 
         entryViewModel.insertEntry(imagePath)
+
+        view?.let {
+            Navigation.findNavController(it).navigate(R.id.action_albumSelector_to_albumDashboard)
+        }
+    }
+
+    private fun getOutputDirectory(): File {
+        val mediaDir = activity?.externalMediaDirs?.firstOrNull()?.let {
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+        }
+        return if (mediaDir != null && mediaDir.exists())
+            mediaDir else context?.filesDir!!
     }
 
     fun updateChosenAlbum(album: Album) {

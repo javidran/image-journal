@@ -40,13 +40,13 @@ class DataSource(val context: Context) {
         val currentList = albumsLiveData.value
         if (currentList == null) {
             albumsLiveData.postValue(listOf(album))
-            entriesListLiveData[album.title] = MutableLiveData(emptyList())
+            entriesListLiveData[album.title] = MutableLiveData(mutableListOf())
             AppDatabase.getInstance(context).albumDao().insertAll(album)
         } else {
             val updatedList = currentList.toMutableList()
             updatedList.add(0, album)
             albumsLiveData.postValue(updatedList)
-            entriesListLiveData[album.title] = MutableLiveData(emptyList())
+            entriesListLiveData[album.title] = MutableLiveData(mutableListOf())
             AppDatabase.getInstance(context).albumDao().insertAll(album)
         }
         Log.d("DataSource", "Album saved!")
@@ -76,7 +76,8 @@ class DataSource(val context: Context) {
     }
 
     fun addImageToAlbum(entry: Entry) {
-
+        AppDatabase.getInstance(context).entryDao().insertAll(entry)
+        entriesListLiveData[entry.albumTitle]?.value?.add(entry)
 
     }
 
@@ -84,15 +85,15 @@ class DataSource(val context: Context) {
         return getEntriesFromAlbum(albumTitle).value!!.size + 1
     }
 
-    fun getEntriesFromAlbum(albumTitle: String) : LiveData<List<Entry>> {
+    fun getEntriesFromAlbum(albumTitle: String) : LiveData<MutableList<Entry>> {
         return entriesListLiveData[albumTitle]!!
     }
 
-    fun getAllEntries() : HashMap<String, MutableLiveData<List<Entry>>> {
-        val map = HashMap<String, MutableLiveData<List<Entry>>>()
+    fun getAllEntries() : HashMap<String, MutableLiveData<MutableList<Entry>>> {
+        val map = HashMap<String, MutableLiveData<MutableList<Entry>>>()
         val list = AppDatabase.getInstance(context).albumDao().getAlbumWithEntries()
         list.forEach {
-            map.set(it.album.title, MutableLiveData(it.entries))
+            map.set(it.album.title, MutableLiveData(it.entries.toMutableList()))
         }
         return map
     }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.compose.navArgument
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentAddAlbumBinding
 import com.javidran.imagejournal.databinding.FragmentViewAlbumBinding
@@ -52,9 +53,11 @@ class ViewAlbum : Fragment() {
             EntryViewModelFactory(requireContext(), album)
         }
 
+        binding.entriesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         entryViewModel.entriesLiveData.observe(viewLifecycleOwner, {
             it?.let {
-                binding.entriesRecyclerView.adapter = EntryListAdapter(it) { entry -> adapterOnClick(entry) }
+
+                binding.entriesRecyclerView.adapter = EntryListAdapter(it.sortedBy { list -> list.number }) { entry -> adapterOnClick(entry) }
             }
         })
 

@@ -1,5 +1,7 @@
 package com.javidran.imagejournal.view.album
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +14,10 @@ import com.javidran.imagejournal.model.Entry
 
 class EntryListAdapter(private val dataSet: List<Entry>, private val onClick: (Entry) -> Unit) :
     RecyclerView.Adapter<EntryListAdapter.ViewHolder>() {
+
+    init {
+
+    }
 
     /**
      * Provide a reference to the type of views that you are using
@@ -33,7 +39,11 @@ class EntryListAdapter(private val dataSet: List<Entry>, private val onClick: (E
         fun bind(entry: Entry) {
             currentEntry = entry
             number.text = entry.number.toString()
-            //TODO ImageView image set
+
+            val options = BitmapFactory.Options()
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888
+            val imageBitmap = BitmapFactory.decodeFile(entry.imagePath, options)
+            image.setImageBitmap(imageBitmap)
         }
     }
 
