@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
 import com.javidran.imagejournal.model.Album
 import com.javidran.imagejournal.view.album.EntryViewModel
@@ -22,6 +23,8 @@ import com.javidran.imagejournal.view.selector.AlbumChooserListAdapter
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -38,6 +41,7 @@ class AlbumSelector : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    lateinit var originalImagePath: String
     lateinit var choosenAlbum :Album
     lateinit var bitmapFin: Bitmap
 
@@ -50,14 +54,21 @@ class AlbumSelector : Fragment() {
         _binding = null
     }
 
-    fun combineFrameAndImage(imagePath: String): Bitmap {
+    fun combineFrameAndImage(imagePath: String, number: Int?): Bitmap {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
-        val image = BitmapFactory.decodeFile(imagePath, options)
+        var image = BitmapFactory.decodeFile(imagePath, options)
+
+        //Bitmap rotation: https://stackoverflow.com/questions/3647993/android-bitmaps-loaded-from-gallery-are-rotated-in-imageview
+        val matrix = Matrix()
+        matrix.postRotate(270F)
+        image = createBitmap( image,0,0,image.getWidth(), image.getHeight(), matrix,true)
+
         val imageWidth = image.getWidth()//!!!Ojillo
         val imageHeight = image.getHeight()//!!!Ojillo
+
         //Creación footer
-        val footerBitmap = designFooter(imageWidth,imageHeight)
+        val footerBitmap = designFooter(imageWidth,imageHeight,number)
 
 
         var finalImage = createBitmap(image.getWidth(), image.getHeight(), image.getConfig())
@@ -65,37 +76,47 @@ class AlbumSelector : Fragment() {
         finalCanvas.drawBitmap(image, 0F, 0F, null)
 
         val posFromLeft = 0F
-        val posFromTop = 0F//(5*imageHeight)/6F
+        val posFromTop = (5*imageHeight)/6F
         finalCanvas.drawBitmap(footerBitmap, posFromLeft, posFromTop, null)
-
-        //Bitmap rotation: https://stackoverflow.com/questions/3647993/android-bitmaps-loaded-from-gallery-are-rotated-in-imageview
-        val matrix = Matrix()
-        matrix.postRotate(270F)
-        finalImage = createBitmap( finalImage,0,0,finalImage.getWidth(), finalImage.getHeight(), matrix,true)
 
         return finalImage
     }
 
-    fun designFooter(imageWidth: Int,imageHeight: Int): Bitmap {
+    fun designFooter(imageWidth: Int,imageHeight: Int, number: Int?): Bitmap {
         //Painter
 
         val painter = Paint()
-        painter.setColor(Color.parseColor("#BDBDBD"))//painter.setColor(Color.RED)
+        painter.setColor(Color.parseColor("#B200FFFF"))//painter.setColor(Color.RED)
         painter.setStyle(Paint.Style.FILL)
-        val bitmap = createBitmap((imageHeight)/6, imageWidth, Bitmap.Config.ARGB_8888)//!!!Ojito
+        val bitmap = createBitmap(imageWidth, (imageHeight)/6, Bitmap.Config.ARGB_8888)//!!!Ojito
         val canvas = Canvas(bitmap)
         canvas.drawPaint(painter)
 
-/* Intento de texto....
         //Writer
-        val writer = Paint()
-        writer.setColor(Color.BLACK)
-        writer.setStyle(Paint.Style.FILL)
-        writer.setAntiAlias(true)
-        writer.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("Hwduiahwdahwdkjahwdkjuhakwdhakj", 0F, 10F, writer)
+        val writerLeft = Paint()
+        writerLeft.setColor(Color.BLACK)
+        writerLeft.setStyle(Paint.Style.FILL)
+        writerLeft.setAntiAlias(true)
+        writerLeft.setTextAlign(Paint.Align.LEFT)
+        writerLeft.setTextSize(3*bitmap.height.toFloat()/5F)
 
- */
+        val writerRight = Paint()
+        writerRight.setColor(Color.BLACK)
+        writerRight.setStyle(Paint.Style.FILL)
+        writerRight.setAntiAlias(true)
+        writerRight.setTextAlign(Paint.Align.RIGHT)
+        writerRight.setTextSize(3*bitmap.height.toFloat()/5F)
+        var textNumber = "#"
+        if(number != null) {
+            textNumber = textNumber + number.toString()
+        }
+        canvas.drawText(textNumber, 20F, (5*bitmap.height.toFloat())/6, writerLeft)
+
+        val format = SimpleDateFormat("dd/MM/yy")
+        val dateString = format.format(Date())
+
+        canvas.drawText(dateString, bitmap.width.toFloat()-20F, (5*bitmap.height.toFloat())/6, writerRight)
+
         return bitmap
 
     }
@@ -110,6 +131,18 @@ class AlbumSelector : Fragment() {
 
         binding.albumOptions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
+        // get device dimensions
+        val displayMetrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+        dwidth = displayMetrics.widthPixels
+        dheight = displayMetrics.heightPixels
+
+        //Image loading
+        originalImagePath = arguments?.getString("imagePath")!!
+
+        bitmapFin = combineFrameAndImage(originalImagePath, null)
+        binding.imageWithCounter.setImageBitmap(bitmapFin)
+
         albumViewModel.albumsLiveData.observe(viewLifecycleOwner, {
             it?.let {
                 binding.albumOptions.adapter = AlbumChooserListAdapter(it) { album -> updateChosenAlbum(album) }
@@ -121,23 +154,12 @@ class AlbumSelector : Fragment() {
                 updateChosenAlbum(list.first())
             }
         }
-        // get device dimensions
-        val displayMetrics = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
-        dwidth = displayMetrics.widthPixels
-        dheight = displayMetrics.heightPixels
-
-        //Image loading
-        var imagePath : String = arguments?.getString("imagePath")!!
-        bitmapFin = combineFrameAndImage(imagePath)
 
         binding.btnSave.setOnClickListener {
             onSaveImage()
         }
 
-        binding.imageWithCounter.setImageBitmap(bitmapFin)
-
-        binding.btnRetake.setOnClickListener { retakePhoto(imagePath) }
+        binding.btnRetake.setOnClickListener { retakePhoto(originalImagePath) }
 
         return view
     }
@@ -181,7 +203,9 @@ class AlbumSelector : Fragment() {
         binding.albumChooserTitle.text = choosenAlbum.title
 
         var number = albumViewModel.getNextNumber(album)
-        //TODO actualizar filtro con datos del album
+
+        bitmapFin = combineFrameAndImage(originalImagePath, number)
+        binding.imageWithCounter.setImageBitmap(bitmapFin)
     }
 
     private fun retakePhoto(imagePath: String) {
