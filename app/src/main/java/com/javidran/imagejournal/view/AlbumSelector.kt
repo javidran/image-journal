@@ -8,18 +8,16 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.javidran.imagejournal.R
 import com.javidran.imagejournal.databinding.FragmentAlbumSelectorBinding
-import java.io.File
 import com.javidran.imagejournal.model.Album
 import com.javidran.imagejournal.view.dashboard.AlbumViewModel
 import com.javidran.imagejournal.view.dashboard.AlbumViewModelFactory
 import com.javidran.imagejournal.view.selector.AlbumChooserListAdapter
+import java.io.File
 
 
 /**
@@ -46,7 +44,7 @@ class AlbumSelector : Fragment() {
         _binding = null
     }
 
-    fun combineFrameAndImage(imagePath: String): Bitmap? {
+    fun combineFrameAndImage(imagePath: String): Bitmap {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         val image = BitmapFactory.decodeFile(imagePath, options)
@@ -74,21 +72,24 @@ class AlbumSelector : Fragment() {
 
     fun designFooter(imageWidth: Int,imageHeight: Int): Bitmap {
         //Painter
+
         val painter = Paint()
         painter.setColor(Color.parseColor("#BDBDBD"))//painter.setColor(Color.RED)
         painter.setStyle(Paint.Style.FILL)
         val bitmap = createBitmap((imageHeight)/6, imageWidth, Bitmap.Config.ARGB_8888)//!!!Ojito
         val canvas = Canvas(bitmap)
         canvas.drawPaint(painter)
+
+/* Intento de texto....
         //Writer
         val writer = Paint()
         writer.setColor(Color.BLACK)
         writer.setStyle(Paint.Style.FILL)
         writer.setAntiAlias(true)
-        writer.setTextSize(100F)
-        val x = 0F
-        val y = 0F
-        canvas.drawText("Hi", 0F, 0F, writer)
+        writer.setTextAlign(Paint.Align.LEFT);
+        canvas.drawText("Hwduiahwdahwdkjahwdkjuhakwdhakj", 0F, 10F, writer)
+
+ */
         return bitmap
 
     }
