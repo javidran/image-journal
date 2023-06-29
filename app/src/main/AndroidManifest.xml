@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/image_journal_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.ImageJournal">
-        <activity android:name=".view.MainActivity">
+        <activity android:name=".view.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
